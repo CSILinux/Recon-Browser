@@ -1,9 +1,9 @@
 from sharedfunctions import get_current_timestamp, auditme
 import sys, os
 import subprocess
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QTextEdit, QMessageBox, QDesktopWidget, QLabel, QProgressDialog
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QElapsedTimer
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QTextEdit, QMessageBox, QDesktopWidget, QLabel, QProgressDialog
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import Qt, QElapsedTimer
 from sharedfunctions import auditme, get_current_timestamp, cases_folder, create_case_folder, ChromeThread, csitoolsinit
 import argparse
 

@@ -1,17 +1,22 @@
-from PySide2.QtCore import (
+from PySide6.QtCore import (
     QThread, Signal, QUrl, Qt, QSize, QRect, QMetaObject, QCoreApplication, 
     QPropertyAnimation, QEasingCurve
 )
-from PySide2.QtGui import QIcon, QPixmap, QFont, QPalette, QColor
-from PySide2.QtWidgets import (
-    QApplication, QDesktopWidget, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QFileDialog,
+from PySide6.QtGui import QIcon, QPixmap, QFont, QPalette, QColor, QAction, QGuiApplication
+from PySide6.QtWidgets import (
+    QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QFileDialog,
     QPushButton, QStatusBar, QLabel, QTextEdit, QPlainTextEdit, QLineEdit, QInputDialog,
-     QScrollArea, QDialog, QTabWidget, QAction, QMenuBar, QMenu, QCompleter, QSizePolicy,
+     QScrollArea, QDialog, QTabWidget,  QMenuBar, QMenu, QCompleter, QSizePolicy,
       QDockWidget, QRadioButton, QCheckBox, QSpacerItem, QFormLayout, QSpinBox, QComboBox, QSlider, QDoubleSpinBox, QStackedLayout
       )
-from PySide2.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWebEngineWidgets import QWebEngineView
 import qdarktheme
-from sharedfunctions import pathMe, CaseDirMe, percentSize, BrowseMe
+
+
+
+from csilibs.utils import pathme, CaseDirMe
+from csilibs.gui import percentSize, BrowseMe
+
 from Recon_Tools import *
 
 import os, sys, subprocess
@@ -170,12 +175,14 @@ class ReconMainWindow(QMainWindow):
         self.application = None
 
      
-        self.setGeometry(0,0, *percentSize("app",95,90))
+        self.setGeometry(0,0, *percentSize(app,95,90))
+        
         self.center()
 
         #-------------------------- MENU BAR --------------------------#
+        
         self.menubar = QMenuBar(self)
-        self.menubar.setGeometry(QRect(0, 0, *percentSize("app",95,10)))
+        self.menubar.setGeometry(QRect(0, 0, *percentSize(app,95,10)))
         self.menubar.setObjectName("menubar")
         self.setMenuBar(self.menubar)
         
@@ -250,7 +257,7 @@ class ReconMainWindow(QMainWindow):
                     if os.path.basename(selected_file) == module.Tool4Recon.tool_name + '.py':
                         print("Tool4Recon class is available in the selected file.")
                         class_msg = 'Installation of the extension completed! Restart the Recon Browser'
-                        with open(pathMe('recon_extensions.txt'), 'a') as f:
+                        with open(pathme('recon_extensions.txt'), 'a') as f:
                             f.write(f'{selected_file}\n')
                         QMessageBox.information(self, "Success", class_msg)
                         response = QMessageBox.question(self, "Restart Application", "Do you want to close the application?",
@@ -276,13 +283,15 @@ class ReconMainWindow(QMainWindow):
 
     def center(self):
         qRect = self.frameGeometry()
-        center_point = QDesktopWidget().availableGeometry().center()
+        center_point = QGuiApplication.primaryScreen().availableGeometry().center()
         qRect.moveCenter(center_point)
         self.move(qRect.topLeft())
 
     def set_application(self, application):
         """Set the application instance."""
         self.application = application
+        
+        
 
     def update_status(self, message):
         """Update the status bar with the given message."""
@@ -320,7 +329,7 @@ class infoSectionGUI(QWidget):
         self.sideLayout.addWidget(psh_btn)
     
     def setPage(self, html_path):
-        image_path = os.path.abspath(pathMe(html_path))
+        image_path = os.path.abspath(pathme(html_path))
         url = QUrl.fromLocalFile(image_path)
         self.browser.setUrl(url)
 
@@ -441,11 +450,13 @@ class ReconBrowserGUI(QWidget):
         self.scroll_layout2 = QVBoxLayout(self.scroll_content_widget2)
         
         self.browse_me = BrowseMe(self, evidence_dir)  # Pass evidence_dir argument
+        print("reached here")
+        
         self.scroll_layout2.addWidget(self.browse_me)
         self.scroll_area2.setWidget(self.scroll_content_widget2)
         self.image_layout.addWidget(self.scroll_area2)
         # Load the file URL "Images/Adult_Content.jpg"
-        # image_path = os.path.abspath(pathMe("assets/fingerprint_banner.jpg"))
+        # image_path = os.path.abspath(pathme("assets/fingerprint_banner.jpg"))
         # url = QUrl.fromLocalFile(image_path)
         # url = "https://johnhammond.org/"
         url = "http://localhost"
@@ -521,17 +532,23 @@ class ReconBrowserGUI(QWidget):
 def reconMain(case):
     # global case_name,case_directory
     case_name = case
+    global app
     app = QApplication(sys.argv + ['--no-sandbox'])
     # qdarktheme.setup_theme()
     qdarktheme.setup_theme()
     case_directory = CaseDirMe(case_name,create=True).case_dir      
     # Create the main window
     main_window = ReconMainWindow(case_directory)
-
+    
     widget = ReconBrowserGUI(main_window, case_directory)
+    
     main_window.setCentralWidget(widget)
     main_window.set_application(app)
-
+    
+    print(f"checking {main_window}")
+    print(f"checking app {app}")
+    print(f"checking win {widget}")
+    
     # Show the main window
     main_window.show()
     

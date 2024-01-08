@@ -1,4 +1,3 @@
-from sharedfunctions import *
 import datetime, os, subprocess, time, re, json, sys, requests, urllib3
 from bs4 import BeautifulSoup
 from stem import Signal
@@ -21,7 +20,9 @@ from PIL import Image
 from io import BytesIO
 import platform
 import os.path
+import argparse
  
+from csilibs.utils import pathme
 #----------------------- GLOBAL INIT ------------------------------#
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 os_name = platform.system()
@@ -34,7 +35,7 @@ evidence_dir = ''
 domains_dir = ''
 filepathhtm = ''
 
-keywords_folder = pathMe('data/keywordlists')
+keywords_folder = pathme('data/keywordlists')
 if not os.path.exists(keywords_folder):
     raise FileNotFoundError("No Keyword Lists")
 keywords_files = [f for f in os.listdir(keywords_folder) if f.endswith('.txt')]

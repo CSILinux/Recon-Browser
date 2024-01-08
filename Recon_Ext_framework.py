@@ -1,5 +1,5 @@
 # Use the below class in order to create extension for recon browser
-from PySide2.QtWidgets import QDialog
+from PySide6.QtWidgets import QDialog
 
 class Tool4Recon:
     """

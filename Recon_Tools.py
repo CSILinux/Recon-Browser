@@ -1,12 +1,12 @@
-from PySide2.QtCore import (
+from PySide6.QtCore import (
     QThread, Signal, QUrl, Qt, QSize, QRect, QMetaObject, QCoreApplication, 
     QPropertyAnimation, QEasingCurve, QStringListModel
 )
-from PySide2.QtGui import QIcon, QPixmap, QFont, QPalette, QColor
-from PySide2.QtWidgets import (
-    QApplication, QDesktopWidget, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QMessageBox,
+from PySide6.QtGui import QIcon, QPixmap, QFont, QPalette, QColor, QAction
+from PySide6.QtWidgets import (
+    QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QMessageBox,
     QPushButton, QStatusBar, QLabel, QTextEdit, QPlainTextEdit, QLineEdit, QInputDialog,
-     QScrollArea, QDialog, QTabWidget, QAction, QMenuBar, QMenu, QCompleter, QSizePolicy,
+     QScrollArea, QDialog, QTabWidget, QMenuBar, QMenu, QCompleter, QSizePolicy,
       QDockWidget, QRadioButton, QCheckBox, QSpacerItem, QFormLayout, QSpinBox, QComboBox, QSlider, QDoubleSpinBox, QStackedLayout
       )
 import os, sys, re
@@ -15,7 +15,10 @@ import whois as who_is
 
 from csi_scanner_darkly_scraper import main_scraper
 from CSI_Constants import *
-from sharedfunctions import pathMe, CaseDirMe, percentSize, BrowseMe
+
+from csilibs.utils import pathme, CaseDirMe
+from csilibs.gui import percentSize, BrowseMe
+
 from lib_nmap import nmapCmd
 
 from urllib.parse import urlparse
@@ -93,7 +96,7 @@ class ReconTools(QThread):
             os.makedirs(self.recon_info_dir)
         
         if init_ext == True:
-            with open(pathMe('recon_extensions.txt'),'r') as f:
+            with open(pathme('recon_extensions.txt'),'r') as f:
                 ReconTools.exts_path  = f.read().split()
                 
         if ReconTools.exts_path != [] :

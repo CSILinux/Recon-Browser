@@ -1,6 +1,6 @@
 import os,sys,subprocess,shlex, xmltodict, json
-from sharedfunctions import checkpass
-from PyQt5.QtWidgets import QApplication
+from csilibs.auth import checkpass
+from PySide6.QtWidgets import QApplication
 def get_nmap_path():
     """
     Returns the location path where nmap is installed
