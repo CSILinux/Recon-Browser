@@ -23,6 +23,9 @@ import os.path
 import argparse
  
 from csilibs.utils import pathme
+from csilibs.networking import TorCheck, ChromedriverCheck
+from csilibs.utils import CaseDirMe, auditme, get_current_timestamp, get_random_useragent
+from csilibs.auth import gen_md5
 #----------------------- GLOBAL INIT ------------------------------#
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 os_name = platform.system()
@@ -164,12 +167,13 @@ def fresh_record(url, session, keywords, records, driver, onion, recurse=False, 
     } 
     
     try:
-        headers = getRandomUserAgent()
-
+        headers = get_random_useragent()
         if onion:
             driver.options.add_argument("--proxy-server=socks5://127.0.0.1:9050")       
         site_response = session.get(url, headers=headers, timeout=10)
         site_soup = BeautifulSoup(site_response.text, "html.parser")
+        print("testing soup fast: ", site_soup)
+        
         html_code = site_response.text
         filepathhtm = os.path.join(evidence_dir, domains_dir, urlparse(url).netloc, genFileName(url,'html'))
         with open(filepathhtm, 'w', encoding='utf-8') as file:
@@ -287,7 +291,7 @@ def fresh_record(url, session, keywords, records, driver, onion, recurse=False, 
                     keyword_count[keyword_group][keyword] = count
         record["keywords"] = keyword_count
 
-        record["md5_hash"] = {filepathhtm: generate_md5(filepathhtm)}        
+        record["md5_hash"] = {filepathhtm: gen_md5(filepathhtm)}        
         
     except Exception as e:
         record["first_connected"] = None
@@ -298,7 +302,6 @@ def fresh_record(url, session, keywords, records, driver, onion, recurse=False, 
     # Finding links in the website for the recursive scraping
     internal_urls = []
     external_urls = []
-
     a_tags = site_soup.find_all('a')
     href_list = [a.get('href') for a in a_tags]
     href_list = [x for x in href_list if x is not None]
@@ -358,12 +361,11 @@ def fresh_record(url, session, keywords, records, driver, onion, recurse=False, 
 def main_scraper(case, dom_dir, url, options, recurse=False, depth=1):
     
     print("Starting Scanner Darkly Scraper")
-    TorCheck("on")
+    # TorCheck("on")
     
     global case_directory, evidence_dir, domains_dir, filepathhtm
     domains_dir = dom_dir
     case_directory = CaseDirMe(case, create=True).case_dir
-    create_case_folder(case_directory)
 
     auditme(case_directory, f"Opening {csitoolname}") 
 
@@ -458,7 +460,7 @@ def main_scraper(case, dom_dir, url, options, recurse=False, depth=1):
         extra_options = ["--disable-extensions", "--incognito", "--headless", "--disable-javascript", "--disable-popup-blocking", "--disable-notifications", "--incognito"]
         driver = ChromedriverCheck("on", additional_options=extra_options, onion=False)
         print("Internet setup complete")
-
+    # new record
     if options == 'n':
         record = fresh_record(url, session, keywords, records, driver, onion=False, recurse=recurse, depth=depth)
         if capture_thread is not None:
@@ -466,10 +468,13 @@ def main_scraper(case, dom_dir, url, options, recurse=False, depth=1):
         else:
             print("Capture thread is None.")
         print("Scraping is complete.")
+    # remove record
+        
     elif options == 'r':
         link_to_delete = url
         records = delete_record(link_to_delete, records)
         print("Removal complete.")
+    # change record
     elif options == 'c':
         updated_records = [record for record in records if record.get("first_connected") is not None]
         # Save the updated records to the JSON file
@@ -545,9 +550,9 @@ if __name__  == "__main__":
     # Define command-line arguments
     parser = argparse.ArgumentParser(description="CSI Scanner Darkly Scraper")
     parser.add_argument('--case', type=str, help="case name")
-    parser.add_argument('--edir', type=str, help="Path to the Evidence sub-directory")
+    parser.add_argument('--edir', type=str, help="Path to the Evidence sub-directory", default="recon_browser")
     parser.add_argument('-u', type=str, help="URL to capture", required=True)
-    parser.add_argument('-o', type=str, help="Option r, n, c")
+    parser.add_argument('-o', type=str, help="Option r, n, c", default='n')
     parser.add_argument('--recurse', action='store_true')
     parser.add_argument('--depth', type=int, help="depth 1,2,3..",default=1)
 
