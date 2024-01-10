@@ -350,7 +350,7 @@ def fresh_record(url, session, keywords, records, driver, onion, recurse=False, 
         if not url_found:
             records.append(record)
 
-        with open(f"{evidence_dir}/site_capture.json", "w") as file:
+        with open(f"{evidence_dir}/recon_site_capture.json", "w") as file:
             json.dump(records, file, indent=4)
         
         driver.quit()
@@ -550,7 +550,7 @@ if __name__  == "__main__":
     # Define command-line arguments
     parser = argparse.ArgumentParser(description="CSI Scanner Darkly Scraper")
     parser.add_argument('--case', type=str, help="case name")
-    parser.add_argument('--edir', type=str, help="Path to the Evidence sub-directory", default="recon_browser")
+    parser.add_argument('--edir', type=str, help="Path to the Evidence sub-directory", default="csi_scraped")
     parser.add_argument('-u', type=str, help="URL to capture", required=True)
     parser.add_argument('-o', type=str, help="Option r, n, c", default='n')
     parser.add_argument('--recurse', action='store_true')

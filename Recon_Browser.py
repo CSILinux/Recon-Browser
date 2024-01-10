@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
       QDockWidget, QRadioButton, QCheckBox, QSpacerItem, QFormLayout, QSpinBox, QComboBox, QSlider, QDoubleSpinBox, QStackedLayout
       )
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWebEngineCore import QWebEngineSettings
 import qdarktheme
 
 
@@ -317,6 +318,12 @@ class infoSectionGUI(QWidget):
 
         self.browser = QWebEngineView(self)
         # self.browser.setUrl(QUrl('https://google.com'))
+        web_settings = self.browser.settings()
+        web_settings.setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+        web_settings.setAttribute(QWebEngineSettings.LocalStorageEnabled, True)
+        web_settings.setAttribute(QWebEngineSettings.LocalContentCanAccessFileUrls, True)
+        web_settings.setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+
 
         self.main_layout.addWidget(self.browser,3)
 
